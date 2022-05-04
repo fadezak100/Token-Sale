@@ -39,7 +39,7 @@ contract ('DappToken', ([owner, customer])=> {
 
     describe("Delegated Transfering Test", async () => {
         it("Tests delegated transfers", async() => {
-            await dappToken.approve(owner, tokens('99'));
+            await dappToken.approve(owner, tokens('99'));   
             await dappToken.transferForm(owner, customer, tokens('99')); 
 
             let result = await dappToken.balanceOf(customer); 
