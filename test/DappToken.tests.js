@@ -14,6 +14,7 @@ contract ('DappToken', ([owner, customer])=> {
         return web3.utils.toWei(number, "ether")
     }
 
+
     describe("Testing the total supply", async() => {
         it("Checks the total supply after deployment", async() => {
             let result = await dappToken.totalSupply();
