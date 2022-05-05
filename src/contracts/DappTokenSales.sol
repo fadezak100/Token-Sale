@@ -24,14 +24,20 @@ contract DappTokenSales {
 
     function buyTokens(uint256 _numberOfTokens) public payable {
         require(msg.value == mul(_numberOfTokens, tokenPrice));
-        uint256 balacne = address(this).balance; 
-        require(balacne >= _numberOfTokens); 
-        //require transfer is successful
+        uint256 balance = address(this).balance; 
+        require(balance >= _numberOfTokens); 
         require(dappToken.transfer(msg.sender, _numberOfTokens));
-
-
         tokenSold += _numberOfTokens; 
         emit Sell(msg.sender, _numberOfTokens); 
+    }
+
+    //ending the sale
+    function endSale() public {
+        require(msg.sender == admin);
+        //transferring remaing dapp tokens to admin
+        uint256 balance = address(this).balance; 
+        require(dappToken.transfer(admin, balance));
+        //destroy the contract
     }
 
 

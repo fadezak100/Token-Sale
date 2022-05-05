@@ -20,6 +20,10 @@ contract('DappTokenSales', ([owner, customer]) => {
         return web3.utils.toWei(number, "ether")
     }
 
+    function token(number) {
+        return web3.utils.fromWei(number, "ether")
+    }
+
     before(async() => {
         dappToken = await DappToken.new();
          dappTokenSales = await DappTokenSales.new(dappToken.address, tokenPrice);
@@ -75,6 +79,18 @@ contract('DappTokenSales', ([owner, customer]) => {
         
         
     }); 
+
+    // describe("Ending Token Sale", async() =>{
+    //     it("Accesses by customer", async () => {
+    //        await dappTokenSales.endSale({from: owner});
+    //     });
+    //     it("Checks the balance of the admin", async() => {
+    //         let result = await dappToken.balanceOf(owner);
+    //         assert.equal(token(result), 999980); 
+    //     }); 
+    // }); 
+
+
 
 
 
