@@ -1,3 +1,5 @@
+const { assert } = require('chai');
+
 const DappTokenSales = artifacts.require("DappTokenSales"); 
 const DappToken = artifacts.require("DappToken"); 
 
@@ -10,7 +12,8 @@ require('chai').use(require('chai-as-promised')).should();
 contract('DappTokenSales', ([owner, customer]) => {
     let dappTokenSales, dappToken;
     var tokenPrice =  1000000000000000;
-    let numberOfTokens; 
+    var tokensAvailable = 750000; 
+    let numberOfTokens = 10; 
 
 
     function tokens(number) {
@@ -20,8 +23,7 @@ contract('DappTokenSales', ([owner, customer]) => {
     before(async() => {
         dappToken = await DappToken.new();
          dappTokenSales = await DappTokenSales.new(dappToken.address, tokenPrice);
-
-         await dappToken.transfer(dappTokenSales.address, tokens("750000"), {from: owner}); 
+         await dappToken.transfer(dappTokenSales.address, tokensAvailable, {from: owner}); 
     }); 
 
     describe("Initialize Token Sale", async() => {
@@ -34,7 +36,7 @@ contract('DappTokenSales', ([owner, customer]) => {
     
     describe("Buy Tokens Tests", async() => {
         it("Keep track of the amount of token sold", async () => {
-            numberOfTokens = 10; 
+
             let recipit = await dappTokenSales.buyTokens(numberOfTokens, {from: customer, value: tokenPrice * numberOfTokens});
             let result = await dappTokenSales.tokenSold();
             assert.equal(result.toNumber(), numberOfTokens, 'Increaments the number of token sold'); 
@@ -44,30 +46,34 @@ contract('DappTokenSales', ([owner, customer]) => {
         });
 
         it("Tests triggering selling events", async () => {
-            numberOfTokens = 10; 
+
             let recipit = await dappTokenSales.buyTokens(numberOfTokens, {from: customer, value: tokenPrice * numberOfTokens});
-            // assert.equal(recipit.logs.length, 2, 'one selling event triggered'); 
-            // assert.equal(recipit.logs[0].args._customer, customer, 'logs the account that purshased the token');
-            // assert.equal(recipit.logs[0].event, 'Sell', 'The event should be "Sell" event' );
-            // assert.equal(recipit.logs[0].args._amount, numberOfTokens, 'The amount should match then number of tokens') 
+            assert.equal(recipit.logs.length, 1, 'one selling event triggered'); 
+            assert.equal(recipit.logs[0].args._customer, customer, 'logs the account that purshased the token');
+            assert.equal(recipit.logs[0].event, 'Sell', 'The event should be "Sell" event' );
+            assert.equal(recipit.logs[0].args._amount, numberOfTokens, 'The amount should match then number of tokens');
         }); 
 
     }); 
 
     describe("DappTokenSales Balance", async () => {
-        it("Checks the balance of the dapptokensales contracr", async()=>{
+        it("Checks the balance of the dapptokensales contract", async()=>{
             let result = await dappToken.balanceOf(dappTokenSales.address); 
-            assert.equal(result, tokens('750000'), 'dappTokensSales has incorrect balacne'); 
+            let one = await dappToken.balanceOf(customer);
+            let exp = tokensAvailable - one;
+            assert.equal(result.toNumber(), exp , 'dappTokensSales has incorrect balacne'); 
         }); 
 
         it("Purshace more tokens than avaiable", async() => {
             await dappTokenSales.buyTokens(tokens("750201"), {from: customer, value: tokenPrice * numberOfTokens}).should.be.rejected;
         });
+
+        it("Tests successful transfer", async() =>{
+           let result = await dappToken.balanceOf(customer);
+           assert.equal(result, 20);
+        }); 
         
-        // it("Checks successful transfers", async() => {
-        //     let result = await dappToken.balanceOf(customer); 
-        //     assert.equal(result.toNumber(), tokens('20'));
-        // }); 
+        
     }); 
 
 

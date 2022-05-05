@@ -27,7 +27,7 @@ contract DappTokenSales {
         uint256 balacne = address(this).balance; 
         require(balacne >= _numberOfTokens); 
         //require transfer is successful
-        // require(dappToken.transfer(msg.sender, _numberOfTokens));
+        require(dappToken.transfer(msg.sender, _numberOfTokens));
 
 
         tokenSold += _numberOfTokens; 
