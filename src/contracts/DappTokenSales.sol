@@ -31,15 +31,12 @@ contract DappTokenSales {
         emit Sell(msg.sender, _numberOfTokens); 
     }
 
-    //ending the sale
+
     function endSale() public {
         require(msg.sender == admin);
-        //transferring remaing dapp tokens to admin
         uint256 balance = address(this).balance; 
         require(dappToken.transfer(admin, balance));
-        //destroy the contract
+        selfdestruct(admin);
     }
-
-
 
 }
