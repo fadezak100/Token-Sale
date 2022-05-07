@@ -1,5 +1,5 @@
 {
-    "server": {
-        "baseDir": ["./src/", "./src/contracts"]
+    "server": { 
+        "baseDir": ["./src/", "./src/truffle_abis"]
     }
 }
